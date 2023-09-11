@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { RequireAuth } from "react-auth-kit";
-import Root from "./routes";
-import Login from "./routes/login";
-import Register from "./routes/register";
+import Root from "./pages";
+import Login from "./pages/login";
+import Register from "./pages/register";
 
 export const router = createBrowserRouter([
     {
