@@ -1,7 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import { Box, Button, CircularProgress, TextField } from "@mui/material";
+import axios, { isAxiosError } from "axios";
 import { useSignIn } from "react-auth-kit";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 const LoginSchema = z.object({
@@ -23,62 +25,97 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm<LoginInput>({
         resolver: zodResolver(LoginSchema),
     });
     const signIn = useSignIn();
 
     const onSubmit: SubmitHandler<LoginInput> = async function (data) {
-        const response = await axios({
-            method: "post",
-            url: "/api/auth/login",
-            baseURL: "https://localhost:7247/",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            data,
-        });
+        try {
+            const response = await axios({
+                method: "post",
+                url: "/api/auth/login",
+                baseURL: "https://localhost:7247/",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                data,
+            });
 
-        const token = response.data as string;
+            const token = response.data as string;
 
-        signIn({
-            token: token,
-            expiresIn: 60,
-            tokenType: "Bearer",
-            authState: { username: data.username },
-        });
+            signIn({
+                token: token,
+                expiresIn: 60,
+                tokenType: "Bearer",
+                authState: { username: data.username },
+            });
+            onSuccess();
+        } catch (e) {
+            console.error(e);
 
-        onSuccess();
+            if (!isAxiosError(e) || (!e.response && !e.request)) {
+                toast.error(
+                    "An unexpected error has occurred. Please wait a moment and try again",
+                );
+                return;
+            }
+
+            if (e.response) {
+                toast.error(
+                    e.response.status === 401 ? "Unauthorized" : e.message,
+                );
+            } else if (e.request) {
+                toast.error(
+                    "Server could not be contacted. Please wait a moment and try again",
+                );
+            }
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div>
-                <div>
-                    <label htmlFor="username">Username</label>
-                    <input
-                        id="username"
-                        type="text"
-                        {...register("username")}
-                    />
-                    {!!errors.username && <p>{errors.username.message}</p>}
-                </div>
+        <Box
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+            sx={{ mt: 1 }}
+            noValidate
+        >
+            <TextField
+                id="username"
+                type="text"
+                label="Username"
+                margin="normal"
+                error={!!errors.username}
+                helperText={!!errors.username && errors.username.message}
+                autoFocus
+                fullWidth
+                {...register("username")}
+            />
 
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input
-                        id="password"
-                        type="password"
-                        {...register("password")}
-                    />
-                    {!!errors.password && <p>{errors.password.message}</p>}
-                </div>
-            </div>
+            <TextField
+                id="password"
+                type="password"
+                label="Password"
+                margin="normal"
+                error={!!errors.password}
+                helperText={!!errors.password && errors.password.message}
+                fullWidth
+                {...register("password")}
+            />
 
-            <div>
-                <button type="submit">Submit</button>
-            </div>
-        </form>
+            <Button
+                type="submit"
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                fullWidth
+            >
+                {isSubmitting ? (
+                    <CircularProgress color="inherit" size={24} />
+                ) : (
+                    "Submit"
+                )}
+            </Button>
+        </Box>
     );
 }
