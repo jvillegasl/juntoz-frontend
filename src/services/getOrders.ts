@@ -5,7 +5,7 @@ export async function getOrders() {
     const response = await axios<IOrder[]>({
         method: "get",
         url: "/api/orders",
-        baseURL: "https://localhost:7247/",
+        baseURL: import.meta.env.VITE_BACKEND_URL,
     });
 
     return response.data;

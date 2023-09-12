@@ -9,7 +9,7 @@ export async function login(data: LoginData) {
     const response = await axios({
         method: "post",
         url: "/api/auth/login",
-        baseURL: "https://localhost:7247/",
+        baseURL: import.meta.env.VITE_BACKEND_URL,
         headers: {
             "Content-Type": "application/json",
         },

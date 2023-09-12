@@ -10,7 +10,7 @@ export async function registerUser(data: RegisterData) {
     return await axios({
         method: "post",
         url: "/api/auth/register",
-        baseURL: "https://localhost:7247/",
+        baseURL: import.meta.env.VITE_BACKEND_URL,
         headers: {
             "Content-Type": "application/json",
         },
