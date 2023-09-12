@@ -16,7 +16,7 @@ import { FilterForm } from "./FilterForm";
 type OrdersFilterProps = {
     clientDNIs: string[];
     ordersNumbers: number[];
-    onFilter: (filterField: string, filterValue: string) => void;
+    onFilter: (filterField?: string, filterValue?: string) => void;
 };
 
 export function OrdersFilter({
@@ -38,6 +38,11 @@ export function OrdersFilter({
 
     function handleFilter(field: string, value: string) {
         onFilter(field, value);
+        handleClose();
+    }
+
+    function handleReset() {
+        onFilter();
         handleClose();
     }
 
@@ -66,6 +71,10 @@ export function OrdersFilter({
                 </DialogContent>
 
                 <DialogActions>
+                    <Button onClick={handleReset} sx={{ mr: "auto" }}>
+                        Reset
+                    </Button>
+
                     <Button onClick={handleClose}>Cancel</Button>
 
                     <Button type="submit" form="filter-form">

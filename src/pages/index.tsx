@@ -14,7 +14,10 @@ export default function Root() {
     } = useOrders();
 
     function handleFitler(field?: string, value?: string) {
-        if (!field || !value) return;
+        if (!field || !value) {
+            setFilter(undefined);
+            return;
+        }
 
         setFilter({ field, value });
     }
