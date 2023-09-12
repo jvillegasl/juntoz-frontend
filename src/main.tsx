@@ -13,14 +13,17 @@ import { router } from "./router";
 import { AuthProvider } from "react-auth-kit";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { ToastContainer } from "react-toastify";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const theme = createTheme();
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <AuthProvider authType="localstorage" authName="_token">
             <ThemeProvider theme={theme}>
                 <CssBaseline />
+
                 <ToastContainer
                     position="top-right"
                     autoClose={5000}
@@ -31,7 +34,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                     pauseOnFocusLoss
                     closeOnClick
                 />
-                <RouterProvider router={router} />
+
+                <QueryClientProvider client={queryClient}>
+                    <RouterProvider router={router} />
+                </QueryClientProvider>
             </ThemeProvider>
         </AuthProvider>
     </React.StrictMode>,
