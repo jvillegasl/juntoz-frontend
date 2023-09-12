@@ -1,0 +1,13 @@
+version: '3'
+networks:
+  juntoz-network:
+    name: juntoz-backend_juntoz-network
+    external: true
+
+services:
+  frontend:
+    build: .
+    ports:
+      - '4173:4173'
+    networks:
+      - juntoz-network
