@@ -3,15 +3,26 @@ import { RequireAuth } from "react-auth-kit";
 import Root from "./pages";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import RootLayout from "./pages/Layout";
+import Details from "./pages/details";
 
 export const router = createBrowserRouter([
     {
-        path: "/",
         element: (
             <RequireAuth loginPath="/login">
-                <Root />
+                <RootLayout />
             </RequireAuth>
         ),
+        children: [
+            {
+                path: "/details/:id",
+                element: <Details />,
+            },
+            {
+                path: "/",
+                element: <Root />,
+            },
+        ],
     },
     {
         path: "/login",
