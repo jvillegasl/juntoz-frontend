@@ -1,11 +1,12 @@
+import { registerUser } from "@/services";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
-import axios, { isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-const LoginSchema = z.object({
+const RegisterSchema = z.object({
     username: z
         .string({ required_error: "Username is required" })
         .min(1, { message: "Username is required" }),
@@ -18,7 +19,7 @@ const LoginSchema = z.object({
         .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
-type LoginInput = z.infer<typeof LoginSchema>;
+type RegisterInput = z.infer<typeof RegisterSchema>;
 
 type RegisterFormProps = {
     onSuccess: () => void;
@@ -29,21 +30,13 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm<LoginInput>({
-        resolver: zodResolver(LoginSchema),
+    } = useForm<RegisterInput>({
+        resolver: zodResolver(RegisterSchema),
     });
 
-    const onSubmit: SubmitHandler<LoginInput> = async function (data) {
+    const onSubmit: SubmitHandler<RegisterInput> = async function (data) {
         try {
-            await axios({
-                method: "post",
-                url: "/api/auth/register",
-                baseURL: "https://localhost:7247/",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                data,
-            });
+            await registerUser(data);
 
             onSuccess();
         } catch (e) {

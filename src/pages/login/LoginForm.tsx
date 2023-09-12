@@ -1,6 +1,7 @@
+import { login } from "@/services";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
-import axios, { isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { useSignIn } from "react-auth-kit";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -33,17 +34,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
     const onSubmit: SubmitHandler<LoginInput> = async function (data) {
         try {
-            const response = await axios({
-                method: "post",
-                url: "/api/auth/login",
-                baseURL: "https://localhost:7247/",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                data,
-            });
-
-            const token = response.data as string;
+            const token = await login(data);
 
             signIn({
                 token: token,
@@ -51,6 +42,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
                 tokenType: "Bearer",
                 authState: { username: data.username },
             });
+
             onSuccess();
         } catch (e) {
             console.error(e);
