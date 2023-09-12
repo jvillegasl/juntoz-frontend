@@ -1,22 +1,7 @@
-import { login } from "@/services";
+import { LoginInput, LoginSchema, useLogin } from "@/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
-import { isAxiosError } from "axios";
-import { useSignIn } from "react-auth-kit";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { z } from "zod";
-
-const LoginSchema = z.object({
-    username: z
-        .string({ required_error: "Username is required" })
-        .min(1, { message: "Username is required" }),
-    password: z
-        .string({ required_error: "Password is required" })
-        .min(1, { message: "Password is required" }),
-});
-
-type LoginInput = z.infer<typeof LoginSchema>;
+import { useForm } from "react-hook-form";
 
 type LoginFormProps = {
     onSuccess: () => void;
@@ -30,46 +15,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     } = useForm<LoginInput>({
         resolver: zodResolver(LoginSchema),
     });
-    const signIn = useSignIn();
 
-    const onSubmit: SubmitHandler<LoginInput> = async function (data) {
-        try {
-            const token = await login(data);
-
-            signIn({
-                token: token,
-                expiresIn: 60,
-                tokenType: "Bearer",
-                authState: { username: data.username },
-            });
-
-            onSuccess();
-        } catch (e) {
-            console.error(e);
-
-            if (!isAxiosError(e) || (!e.response && !e.request)) {
-                toast.error(
-                    "An unexpected error has occurred. Please wait a moment and try again",
-                );
-                return;
-            }
-
-            if (e.response) {
-                toast.error(
-                    e.response.status === 401 ? "Unauthorized" : e.message,
-                );
-            } else if (e.request) {
-                toast.error(
-                    "Server could not be contacted. Please wait a moment and try again",
-                );
-            }
-        }
-    };
+    const { onLogin } = useLogin({ onSuccess });
 
     return (
         <Box
             component="form"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onLogin)}
             sx={{ mt: 1 }}
             noValidate
         >
