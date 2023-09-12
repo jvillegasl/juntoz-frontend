@@ -1,5 +1,11 @@
 import { getOrder } from "@/services";
-import { Box, TextField } from "@mui/material";
+import {
+    Box,
+    CircularProgress,
+    Grid,
+    TextField,
+    Typography,
+} from "@mui/material";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
@@ -15,11 +21,46 @@ export default function Details() {
         error,
     } = useQuery(["order", id], () => getOrder(id));
 
-    if (isLoading) return <h2>Loading...</h2>;
+    if (isLoading) {
+        return (
+            <Grid
+                container
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                gap={8}
+                sx={{ my: 16 }}
+            >
+                <CircularProgress size={64} />
 
-    if (error) return <h2>There was an error while fetching the data.</h2>;
+                <Typography fontWeight={500} fontStyle="italic">
+                    Loading order...
+                </Typography>
+            </Grid>
+        );
+    }
 
-    if (!order) return <h2>Order not found</h2>;
+    if (error) {
+        return (
+            <Typography
+                color="red"
+                marginY={8}
+                fontWeight={500}
+                fontStyle="italic"
+            >
+                We're sorry but something went wrong. Please try again in a few
+                minutes.
+            </Typography>
+        );
+    }
+
+    if (!order) {
+        return (
+            <Typography marginY={8} fontWeight={500} fontStyle="italic">
+                The requested order was not found.
+            </Typography>
+        );
+    }
 
     return (
         <Box component="form">

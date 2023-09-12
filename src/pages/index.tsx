@@ -1,6 +1,7 @@
 import { OrdersTable } from "./OrdersTable";
 import { OrdersFilter } from "./OrdersFilter";
 import { useOrders } from "@/hooks";
+import { CircularProgress, Grid, Typography } from "@mui/material";
 
 export default function Root() {
     const {
@@ -18,9 +19,46 @@ export default function Root() {
         setFilter({ field, value });
     }
 
-    if (isLoading || !filteredOrders) return <h1>Loading</h1>;
+    if (isLoading) {
+        return (
+            <Grid
+                container
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                gap={8}
+                sx={{ my: 16 }}
+            >
+                <CircularProgress size={64} />
 
-    if (error) return <h1>Fetching failed</h1>;
+                <Typography fontWeight={500} fontStyle="italic">
+                    Loading orders...
+                </Typography>
+            </Grid>
+        );
+    }
+
+    if (error) {
+        return (
+            <Typography
+                color="red"
+                marginY={8}
+                fontWeight={500}
+                fontStyle="italic"
+            >
+                We're sorry but something went wrong. Please try again in a few
+                minutes.
+            </Typography>
+        );
+    }
+
+    if (filteredOrders.length === 0) {
+        return (
+            <Typography marginY={8} fontWeight={500} fontStyle="italic">
+                No orders were found.
+            </Typography>
+        );
+    }
 
     return (
         <>
