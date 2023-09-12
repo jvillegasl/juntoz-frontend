@@ -57,7 +57,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
             }
 
             if (e.response) {
-                toast.error(e.response.data.message || e.message);
+                toast.error(e.response.data.message ?? e.message);
             } else if (e.request) {
                 toast.error(
                     "Server could not be contacted. Please wait a moment and try again",
