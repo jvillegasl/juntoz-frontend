@@ -25,11 +25,11 @@ export function useLogin({ onSuccess }: UseLoginProps) {
 
     const onLogin: SubmitHandler<LoginInput> = async function (data) {
         try {
-            const token = await login(data);
+            const { token, expiresIn } = await login(data);
 
             signIn({
-                token: token,
-                expiresIn: 60,
+                token,
+                expiresIn,
                 tokenType: "Bearer",
                 authState: { username: data.username },
             });

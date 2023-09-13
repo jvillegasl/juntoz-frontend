@@ -5,8 +5,13 @@ type LoginData = {
     password: string;
 };
 
+type LoginResponse = {
+    token: string;
+    expiresIn: number;
+};
+
 export async function login(data: LoginData) {
-    const response = await axios({
+    const response = await axios<LoginResponse>({
         method: "post",
         url: "/api/auth/login",
         baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -16,7 +21,5 @@ export async function login(data: LoginData) {
         data,
     });
 
-    const token = response.data as string;
-
-    return token;
+    return response.data;
 }
