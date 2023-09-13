@@ -1,9 +1,10 @@
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import { useMemo } from "react";
-import { useSignOut } from "react-auth-kit";
-import { Outlet, useLocation } from "react-router-dom";
+import { useIsAuthenticated, useSignOut } from "react-auth-kit";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 export default function RootLayout() {
+    const isAuth = useIsAuthenticated();
     const { pathname } = useLocation();
     const signOut = useSignOut();
 
@@ -15,6 +16,10 @@ export default function RootLayout() {
 
     function handleLogout() {
         signOut();
+    }
+
+    if (!isAuth()) {
+        <Navigate to="/login" />;
     }
 
     return (
