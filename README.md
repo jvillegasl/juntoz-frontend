@@ -1,4 +1,4 @@
-# Juntoz - Prueba Ténica Full Stack - Frontend
+# Juntoz - Full Stack Test - Frontend
 
 Frontend implemented in React + Vite + Typescript.
 
